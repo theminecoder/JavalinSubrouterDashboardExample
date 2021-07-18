@@ -60,12 +60,8 @@ public class DashboardHost {
 
         plugins.stream()
                 .peek(plugin -> System.out.println("Enabling " + plugin.getInfo().getId() + ": " + plugin.getInfo().getName()))
-                .forEach(plugin -> {
-                    var current = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(plugin.getClassLoader());
-                    plugin.getPlugin().onEnable();
-                    Thread.currentThread().setContextClassLoader(current);
-                });
+                .map(LoadedPlugin::getPlugin)
+                .forEach(Plugin::onEnable);
 
         app.start(3000);
 
